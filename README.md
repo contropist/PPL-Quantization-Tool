@@ -12,7 +12,7 @@ PPQ 是一个可扩展的、高性能的、面向工业应用的神经网络量�
 
 这是一个为处理复杂量化任务而生的框架 —— PPQ 的执行引擎是专为量化设计的，截止 PPQ 0.6.6 版本，软件一共内置 99 种常见的 Onnx 算子执行逻辑，并原生支持执行过程中的量化模拟操作。PPQ 可以脱离 Onnxruntime 完成 Onnx 模型的推理与量化。作为架构设计一部分，我们允许用户使用 Python + Pytorch 或 C++ / Cuda 为 PPQ 注册新的算子实现，新的逻辑亦可替换现有的算子实现逻辑。PPQ 允许相同的算子在不同平台上有不同的执行逻辑，从而支撑不同硬件平台的运行模拟。借助定制化的执行引擎与 PPQ Cuda Kernel 的高性能实现，使得 PPQ 具有极其显著的性能优势，往往能以惊人的效率完成量化任务。
 
-PPQ 的开发与推理框架关系密切，这使得我们能够了解硬件推理的诸多细节，从而严格控制硬件模拟误差。在国内外众多开源工作者共同努力之下，目前 PPQ 支持与 TensorRT, OpenPPL, Openvino, ncnn, mnn, Onnxruntime, Tengine, Snpe, GraphCore, Metax 等多个推理框架协同工作，并预制了对应量化器与导出逻辑。PPQ 是一个高度可扩展的模型量化框架，借助 ppq.lib 中的函数功能，您能够将 PPQ 的量化能力扩展到其他可能的硬件与推理库上。我们期待与您一起把人工智慧带到千家万户之间。
+PPQ 的开发与推理框架关系密切，这使得我们能够了解硬件推理的诸多细节，从而严格控制硬件模拟误差。在国内外众多开源工作者共同努力之下，目前 PPQ 支持与 TensorRT, OpenPPL, Openvino, ncnn, mnn, Onnxruntime, Tengine, Snpe, GraphCore, Metax 等多个推理框架协同工作，并预制了对应量化器与导出逻辑。PPQ 是一个高度可扩展的模型量化框架，借助 ppq.lib 中的函数功能，您能够将 PPQ 的量化能力扩展到其他可能的硬件与推理库上。我们期待与您一起把人工智能带到千家万户之间。
 
 #### 在 0.6.6 的版本更新中，我们为你带来了这些功能：
    1. [FP8 量化规范](https://zhuanlan.zhihu.com/p/574825662)，PPQ 现在支持 E4M3, E5M2 等多种规范的 FP8 [量化模拟与训练](https://github.com/openppl-public/ppq/blob/master/ppq/samples/fp8_sample.py)
@@ -20,7 +20,7 @@ PPQ 的开发与推理框架关系密切，这使得我们能够了解硬件推�
    3. 更为强大的 [图模式匹配](https://github.com/openppl-public/ppq/blob/master/ppq/IR/search.py) 与 [图融合功能](https://github.com/openppl-public/ppq/blob/master/ppq/IR/morph.py)
    4. 基于 Onnx 的模型 [QAT](https://github.com/openppl-public/ppq/blob/master/ppq/samples/QAT/imagenet.py) 功能
    5. 全新的 [TensorRT](https://github.com/openppl-public/ppq/blob/master/md_doc/deploy_trt_by_OnnxParser.md) 量化与导出逻辑
-   6. 更多正在更新的样例脚本及视频内容
+   6. 全球最大的量化模型库 [OnnxQuant](https://github.com/openppl-public/ppq/tree/master/ppq/samples/QuantZoo)
    7. 其他未知的软件特性
 
 ### Installation (安装方法)
@@ -30,18 +30,19 @@ PPQ 的开发与推理框架关系密切，这使得我们能够了解硬件推�
 2. Install Complier
 
 ```bash
-apt-get install ninja-build
+apt-get install ninja-build # for debian/ubuntu user
+yum install ninja-build # for redhat/centos user
 ```
 
 For Windows User:
 
-  (1). Download ninja.exe from [https://github.com/ninja-build/ninja/releases](https://github.com/ninja-build/ninja/releases), add it to Windows PATH.
+  (1) Download ninja.exe from [https://github.com/ninja-build/ninja/releases](https://github.com/ninja-build/ninja/releases), add it to Windows PATH.
 
-  (2). Download&Install Visual Studio 2019 from [https://visualstudio.microsoft.com](https://visualstudio.microsoft.com/zh-hans/).
+  (2) Install Visual Studio 2019 from [https://visualstudio.microsoft.com](https://visualstudio.microsoft.com/zh-hans/).
 
-  (3). Add your c++ compiler to Windows PATH Environment, if you are using Visual Studio, it should be something like "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86"
+  (3) Add your C++ compiler to Windows PATH Environment, if you are using Visual Studio, it should be like "C:\Program Files\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86"
 
-  (4). Update pytorch to 1.10+.
+  (4) Update PyTorch version to 1.10+.
 
 3. Install PPQ
 
@@ -52,7 +53,7 @@ pip install -r requirements.txt
 python setup.py install
 ```
 
-* Install PPQ from our docker image(Optional):
+* Install PPQ from our docker image (optional):
 
 ```bash
 docker pull stephen222/ppq:ubuntu18.04_cuda11.4_cudnn8.4_trt8.4.1.5
@@ -64,7 +65,7 @@ cd ppq
 export PYTHONPATH=${PWD}:${PYTHONPATH}
 ```
 
-* Install PPQ from Pip(Optional):
+* Install PPQ using pip (optional):
 
 ```bash
 python3 -m pip install ppq
@@ -167,9 +168,9 @@ Email: openppl.ai@hotmail.com
 
 ### Contributions
 
-We appreciate all contributions. If you are planning to contribute back bug-fixes, please do so without any further discussion.
+  We appreciate all contributions. If you are planning to contribute back bug fixes, please do so without any further discussion.
 
-If you plan to contribute new features, utility functions, or extensions to the core, please first open an issue and discuss the feature with us. Sending a PR without discussion might end up resulting in a rejected PR because we might be taking the core in a different direction than you might be aware of.
+  If you plan to contribute new features, utility functions, or extensions to the core, please first open an issue and discuss the feature with us. Sending a PR without discussion might end up resulting in a rejected PR because we might be taking the core in a different direction than you might be aware of.
 
 ### Benchmark
 
@@ -190,17 +191,17 @@ PPQ is tested with models from mmlab-classification, mmlab-detection, mmlab-sega
 | fsaf | Detection | 32 imgs | pplnn | bbox_mAP | 36.5% | 36.6% | 37.4% |
 | mask_rcnn | Detection | 32 imgs | pplnn | bbox_mAP | 37.7% | 37.6% | 37.9% |
 |  ----  |  ----  |  ----  |  ----  |  ----  |  ----  |  ----  |  ----  |
-| deeplabv3 | Segamentation | 32 imgs | conservative | aAcc / mIoU | 96.13% / 78.81% | 96.14% / 78.89%  | 96.17% / 79.12% |
-| deeplabv3plus | Segamentation | 32 imgs | conservative | aAcc / mIoU | 96.27% / 79.39% | 96.26% / 79.29%  | 96.29% / 79.60% |
-| fcn | Segamentation | 32 imgs | conservative | aAcc / mIoU | 95.75% / 74.56% | 95.62% / 73.96%  | 95.68% / 72.35% |
-| pspnet | Segamentation | 32 imgs | conservative | aAcc / mIoU | 95.79% / 77.40% | 95.79% / 77.41%  | 95.83% / 77.74% |
+| deeplabv3 | Segmentation | 32 imgs | conservative | aAcc / mIoU | 96.13% / 78.81% | 96.14% / 78.89%  | 96.17% / 79.12% |
+| deeplabv3plus | Segmentation | 32 imgs | conservative | aAcc / mIoU | 96.27% / 79.39% | 96.26% / 79.29%  | 96.29% / 79.60% |
+| fcn | Segmentation | 32 imgs | conservative | aAcc / mIoU | 95.75% / 74.56% | 95.62% / 73.96%  | 95.68% / 72.35% |
+| pspnet | Segmentation | 32 imgs | conservative | aAcc / mIoU | 95.79% / 77.40% | 95.79% / 77.41%  | 95.83% / 77.74% |
 |  ----  |  ----  |  ----  |  ----  |  ----  |  ----  |  ----  |  ----  |
 | srcnn | Editing | 32 imgs | conservative | PSNR / SSIM | 27.88% / 79.70% | 27.88% / 79.07%  | 28.41% / 81.06% |
 | esrgan | Editing | 32 imgs | conservative | PSNR / SSIM | 27.84% / 75.20% | 27.49% / 72.90%  | 27.51% / 72.84% |
 
 * PPQ(sim) stands for PPQ quantization simulator's result.
 * Dispatcher stands for dispatching policy of PPQ.
-* Classification models are evaluated with ImageNet, Detection and Segamentation models are evaluated with COCO dataset, Editing models are evaluated with DIV2K dataset.
+* Classification models are evaluated with ImageNet, Detection and Segmentation models are evaluated with the COCO dataset, Editing models are evaluated with DIV2K dataset.
 * All calibration datasets are randomly picked from training data.
 
 ### License
